@@ -1,0 +1,49 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Scenes/SearchMatch.gd" type="Script" id=1]
+
+[node name="SearchMatch" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="C" type="CenterContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="V" type="VBoxContainer" parent="C"]
+margin_left = 439.0
+margin_top = 248.0
+margin_right = 584.0
+margin_bottom = 352.0
+
+[node name="TDM" type="CheckBox" parent="C/V"]
+margin_right = 145.0
+margin_bottom = 24.0
+text = "Team Deathmatch"
+
+[node name="FFA" type="CheckBox" parent="C/V"]
+margin_top = 28.0
+margin_right = 145.0
+margin_bottom = 52.0
+text = "Free for all"
+
+[node name="CTF" type="CheckBox" parent="C/V"]
+margin_top = 56.0
+margin_right = 145.0
+margin_bottom = 80.0
+text = "Capture the Flag"
+
+[node name="Search" type="Button" parent="C/V"]
+margin_top = 84.0
+margin_right = 145.0
+margin_bottom = 104.0
+text = "Search game"
+
+[connection signal="pressed" from="C/V/Search" to="." method="_on_Search_pressed"]
