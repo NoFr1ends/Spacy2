@@ -1,4 +1,4 @@
-module github.com/nofr1ends/spacey/server/frontend
+module github.com/nofr1ends/spacy2/server/frontend
 
 go 1.16
 

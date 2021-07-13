@@ -1,4 +1,4 @@
-module github.com/nofr1ends/spacey/server/director
+module github.com/nofr1ends/spacy2/server/director
 
 go 1.16
 

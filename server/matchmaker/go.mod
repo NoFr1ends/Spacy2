@@ -1,4 +1,4 @@
-module github.com/nofr1ends/spacey/server/matchmaker
+module github.com/nofr1ends/spacy2/server/matchmaker
 
 go 1.16
 
