@@ -5,7 +5,7 @@ var is_searching = false
 var ticket_id = ""
 var assignment_timer = Timer.new()
 
-signal match_found(address, port)
+signal match_found(address)
 
 func _ready():
 	add_child(assignment_timer)
@@ -43,6 +43,8 @@ func search_match(modes):
 	# Start assignment clock
 	assignment_timer.start(1)
 	
+	return true
+	
 func cancel_search():
 	if not is_searching:
 		return
@@ -63,3 +65,15 @@ func _on_assignment_timer():
 	if result[1] != 200:
 		printerr("Failed to check ticket status: ", result[3].get_string_from_utf8())
 		return # todo what to do? cancel the search? ignore and retry count?
+		
+	var json = JSON.parse(result[3].get_string_from_utf8())
+	if json.error != OK:
+		printerr("Failed to parse response from matchmaking server: ", json.error_string)
+		return
+		
+	var ticket = json.result
+	if "assignment" in ticket:
+		# We got a match!
+		emit_signal("match_found", ticket.assignment.connection)
+		is_searching = false
+		assignment_timer.stop()
