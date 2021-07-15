@@ -58,6 +58,8 @@ func _on_match_found(address: String):
 	fadeout.visible = false
 	dialog.hide()
 	searching = false
+	GameServer.address = address
+	get_tree().change_scene("res://Scenes/GameScene.tscn")
 
 func _on_Cancel_pressed():
 	Matchmaking.cancel_search()
