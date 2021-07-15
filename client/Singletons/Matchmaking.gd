@@ -50,8 +50,15 @@ func cancel_search():
 		return
 		
 	is_searching = false
-	# todo send cancellation to matchmaking server
 	assignment_timer.stop()
+	
+	var request = HTTPRequest.new()
+	add_child(request)
+	request.request(matchmaking_server + "/ticket/" + ticket_id + "/cancel")
+	var result = yield(request, "request_completed")
+	
+	if result[1] != 204:
+		printerr("Cancel of ticket failed: ", result[3].get_string_from_utf8())
 
 func _on_assignment_timer():
 	print("check for assignment of ticket ", ticket_id)

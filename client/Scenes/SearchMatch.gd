@@ -58,3 +58,9 @@ func _on_match_found(address: String):
 	fadeout.visible = false
 	dialog.hide()
 	searching = false
+
+func _on_Cancel_pressed():
+	Matchmaking.cancel_search()
+	fadeout.visible = false
+	dialog.hide()
+	searching = false

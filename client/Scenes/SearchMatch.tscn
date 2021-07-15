@@ -106,3 +106,4 @@ margin_bottom = 56.0
 text = "Cancel search"
 
 [connection signal="pressed" from="C/V/Search" to="." method="_on_Search_pressed"]
+[connection signal="pressed" from="SearchDialog/M/V/Cancel" to="." method="_on_Cancel_pressed"]

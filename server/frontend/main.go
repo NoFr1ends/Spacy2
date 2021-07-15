@@ -52,7 +52,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 
 func TicketHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	got, err := fe.GetTicket(context.Background(), &pb.GetTicketRequest{TicketId: vars["ticket"]})
+	got, err := fe.GetTicket(context.Background(), &pb.GetTicketRequest{TicketId: vars["ticket"]}) // todo verify ticket ownership
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -61,6 +61,16 @@ func TicketHandler(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(got); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+}
+
+func CancelHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	_, err := fe.DeleteTicket(context.Background(), &pb.DeleteTicketRequest{TicketId: vars["ticket"]})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+
+	w.WriteHeader(204)
 }
 
 var fe pb.FrontendServiceClient
@@ -83,6 +93,7 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/search", SearchHandler)
 	r.HandleFunc("/ticket/{ticket}", TicketHandler)
+	r.HandleFunc("/ticket/{ticket}/cancel", CancelHandler)
 
 	srv := &http.Server {
 		Handler: r,
