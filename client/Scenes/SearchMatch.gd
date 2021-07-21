@@ -10,9 +10,13 @@ onready var fadeout: ColorRect = $UIFadeout
 
 var searching: bool = false
 var time_start: int = 0
+var auth_token = "4711" # TODO: implement login and get proper JWT token
 
 func _ready():
 	Matchmaking.connect("match_found", self, "_on_match_found")
+	
+	if not OS.has_feature("editor"):
+		$DEV.visible = false
 
 func _process(delta):
 	if searching:
@@ -59,6 +63,7 @@ func _on_match_found(address: String):
 	dialog.hide()
 	searching = false
 	GameServer.address = address
+	GameServer.auth_token = auth_token
 	get_tree().change_scene("res://Scenes/GameScene.tscn")
 
 func _on_Cancel_pressed():
@@ -66,3 +71,8 @@ func _on_Cancel_pressed():
 	fadeout.visible = false
 	dialog.hide()
 	searching = false
+
+func _on_DEV_pressed():
+	GameServer.address = "localhost:8002"
+	GameServer.auth_token = auth_token
+	get_tree().change_scene("res://Scenes/GameScene.tscn")

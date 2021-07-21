@@ -25,9 +25,20 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="DEV" type="Button" parent="."]
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 12.0
+margin_bottom = 20.0
+text = "Connect local"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="C" type="CenterContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 2
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -202,5 +213,6 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[connection signal="pressed" from="DEV" to="." method="_on_DEV_pressed"]
 [connection signal="pressed" from="C/P/M/V/Search" to="." method="_on_Search_pressed"]
 [connection signal="pressed" from="SearchDialog/M/V/Cancel" to="." method="_on_Cancel_pressed"]

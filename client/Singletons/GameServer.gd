@@ -1,7 +1,10 @@
 extends Node
 
 var address = ""
+var auth_token = ""
 var network = NetworkedMultiplayerENet.new()
+
+signal connected()
 
 func _ready():
 	network.connect("connection_succeeded", self, "_on_connection_succeeded")
@@ -24,9 +27,15 @@ func connect_to_server(address: String):
 
 func _on_connection_succeeded():
 	print("Connected to game server")
+	
+	rpc_id(1, "authorize", auth_token)
+	auth_token = ""
 
 func _on_connection_failed():
 	printerr("Failed to connect to game server")
 	
 func _on_server_disconnected():
 	printerr("Server closed the connection")
+
+remote func authorized():
+	emit_signal("connected")
