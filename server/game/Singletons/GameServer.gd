@@ -5,7 +5,8 @@ var network = NetworkedMultiplayerENet.new()
 func _ready():
 	network.server_relay = false
 	start_server()
-	# todo: Register server with agones
+	# Server is ready to accept connections from player
+	Agones.mark_ready()
 
 func start_server():
 	network.create_server(8002, 32)
