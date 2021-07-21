@@ -7,6 +7,8 @@ func _ready():
 	start_server()
 	# Server is ready to accept connections from player
 	Agones.mark_ready()
+	# Connect to changes for the gameserver configuration
+	Agones.connect("gameserver", self, "_on_gameserver")
 
 func start_server():
 	network.create_server(8002, 32)
@@ -14,6 +16,9 @@ func start_server():
 	
 	network.connect("peer_connected", self, "_on_peer_connected")
 	network.connect("peer_disconnected", self, "_on_peer_disconnected")
+	
+func _on_gameserver(gameserver):
+	print("Recv gameserver update: ", gameserver)
 	
 func _on_peer_connected(peer_id):
 	print("new connection ", peer_id)
