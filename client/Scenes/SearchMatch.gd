@@ -1,8 +1,8 @@
 extends Control
 
-onready var mode_tdm: CheckBox = $C/V/TDM
-onready var mode_ffa: CheckBox = $C/V/FFA
-onready var mode_ctf: CheckBox = $C/V/CTF
+onready var mode_tdm: CheckBox = $C/P/M/V/TDM
+onready var mode_ffa: CheckBox = $C/P/M/V/FFA
+onready var mode_ctf: CheckBox = $C/P/M/V/CTF
 
 onready var dialog: PopupDialog = $SearchDialog
 onready var time_searching: Label = $SearchDialog/M/V/TimeSearching

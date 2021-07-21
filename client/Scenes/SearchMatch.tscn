@@ -1,6 +1,21 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://Scenes/SearchMatch.gd" type="Script" id=1]
+[ext_resource path="res://Resources/KF_12_o1.tres" type="DynamicFont" id=2]
+[ext_resource path="res://Assets/UI/grey_panel.png" type="Texture" id=3]
+[ext_resource path="res://Assets/UI/blue_button03.png" type="Texture" id=4]
+[ext_resource path="res://Assets/UI/blue_button05.png" type="Texture" id=5]
+[ext_resource path="res://Resources/KF_12.tres" type="DynamicFont" id=6]
+[ext_resource path="res://Assets/UI/red_button00.png" type="Texture" id=7]
+[ext_resource path="res://Assets/UI/red_button02.png" type="Texture" id=8]
+
+[sub_resource type="StyleBoxTexture" id=1]
+texture = ExtResource( 3 )
+region_rect = Rect2( 0, 0, 100, 100 )
+margin_left = 3.60606
+margin_right = 4.43823
+margin_top = 4.99301
+margin_bottom = 3.32868
 
 [node name="SearchMatch" type="Control"]
 anchor_right = 1.0
@@ -17,34 +32,92 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="V" type="VBoxContainer" parent="C"]
-margin_left = 439.0
-margin_top = 248.0
-margin_right = 584.0
-margin_bottom = 352.0
+[node name="P" type="PanelContainer" parent="C"]
+margin_left = 388.0
+margin_top = 167.0
+margin_right = 635.044
+margin_bottom = 432.322
+custom_styles/panel = SubResource( 1 )
 
-[node name="TDM" type="CheckBox" parent="C/V"]
-margin_right = 145.0
-margin_bottom = 24.0
+[node name="M" type="MarginContainer" parent="C/P"]
+margin_left = 3.60606
+margin_top = 4.99301
+margin_right = 242.606
+margin_bottom = 261.993
+custom_constants/margin_right = 20
+custom_constants/margin_top = 10
+custom_constants/margin_left = 20
+custom_constants/margin_bottom = 10
+
+[node name="V" type="VBoxContainer" parent="C/P/M"]
+margin_left = 20.0
+margin_top = 10.0
+margin_right = 219.0
+margin_bottom = 247.0
+custom_constants/separation = 20
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TDM" type="CheckBox" parent="C/P/M/V"]
+margin_right = 199.0
+margin_bottom = 44.0
+custom_fonts/font = ExtResource( 6 )
+custom_colors/font_color_disabled = Color( 0, 0, 0, 1 )
+custom_colors/font_color_hover_pressed = Color( 0, 0, 0, 1 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/font_color_hover = Color( 0, 0, 0, 1 )
+custom_colors/font_color_pressed = Color( 0, 0, 0, 1 )
 text = "Team Deathmatch"
 
-[node name="FFA" type="CheckBox" parent="C/V"]
-margin_top = 28.0
-margin_right = 145.0
-margin_bottom = 52.0
+[node name="FFA" type="CheckBox" parent="C/P/M/V"]
+margin_top = 64.0
+margin_right = 199.0
+margin_bottom = 108.0
+custom_fonts/font = ExtResource( 6 )
+custom_colors/font_color_disabled = Color( 0, 0, 0, 1 )
+custom_colors/font_color_hover_pressed = Color( 0, 0, 0, 1 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/font_color_hover = Color( 0, 0, 0, 1 )
+custom_colors/font_color_pressed = Color( 0, 0, 0, 1 )
 text = "Free for all"
 
-[node name="CTF" type="CheckBox" parent="C/V"]
-margin_top = 56.0
-margin_right = 145.0
-margin_bottom = 80.0
+[node name="CTF" type="CheckBox" parent="C/P/M/V"]
+margin_top = 128.0
+margin_right = 199.0
+margin_bottom = 172.0
+custom_fonts/font = ExtResource( 6 )
+custom_colors/font_color_disabled = Color( 0, 0, 0, 1 )
+custom_colors/font_color_hover_pressed = Color( 0, 0, 0, 1 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/font_color_hover = Color( 0, 0, 0, 1 )
+custom_colors/font_color_pressed = Color( 0, 0, 0, 1 )
 text = "Capture the Flag"
 
-[node name="Search" type="Button" parent="C/V"]
-margin_top = 84.0
-margin_right = 145.0
-margin_bottom = 104.0
-text = "Search game"
+[node name="Search" type="TextureButton" parent="C/P/M/V"]
+margin_left = 4.0
+margin_top = 192.0
+margin_right = 194.0
+margin_bottom = 237.0
+size_flags_horizontal = 4
+texture_normal = ExtResource( 4 )
+texture_pressed = ExtResource( 5 )
+stretch_mode = 2
+
+[node name="Label" type="Label" parent="C/P/M/V/Search"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -74.5
+margin_top = -7.0
+margin_right = 74.5
+margin_bottom = 7.0
+custom_fonts/font = ExtResource( 2 )
+text = "Search for match"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="UIFadeout" type="ColorRect" parent="."]
 visible = false
@@ -60,19 +133,19 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-margin_left = -85.0
-margin_top = -40.0
-margin_right = 85.0
-margin_bottom = 40.0
-rect_min_size = Vector2( 170, 80 )
+margin_left = -110.0
+margin_top = -66.5
+margin_right = 110.0
+margin_bottom = 66.5
+rect_min_size = Vector2( 220, 133 )
 popup_exclusive = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="M" type="MarginContainer" parent="SearchDialog"]
-margin_right = 40.0
-margin_bottom = 40.0
+margin_right = 218.0
+margin_bottom = 133.0
 custom_constants/margin_right = 10
 custom_constants/margin_top = 10
 custom_constants/margin_left = 10
@@ -84,26 +157,50 @@ __meta__ = {
 [node name="V" type="VBoxContainer" parent="SearchDialog/M"]
 margin_left = 10.0
 margin_top = 10.0
-margin_right = 159.0
-margin_bottom = 66.0
+margin_right = 208.0
+margin_bottom = 123.0
+custom_constants/separation = 10
 
 [node name="Label" type="Label" parent="SearchDialog/M/V"]
-margin_right = 149.0
+margin_right = 198.0
 margin_bottom = 14.0
 text = "Searching for a match..."
 
 [node name="TimeSearching" type="Label" parent="SearchDialog/M/V"]
-margin_top = 18.0
-margin_right = 149.0
-margin_bottom = 32.0
+margin_top = 24.0
+margin_right = 198.0
+margin_bottom = 38.0
 text = "00:00"
 align = 1
 
-[node name="Cancel" type="Button" parent="SearchDialog/M/V"]
-margin_top = 36.0
-margin_right = 149.0
-margin_bottom = 56.0
-text = "Cancel search"
+[node name="Spacer" type="Control" parent="SearchDialog/M/V"]
+margin_top = 48.0
+margin_right = 198.0
+margin_bottom = 58.0
+rect_min_size = Vector2( 0, 10 )
 
-[connection signal="pressed" from="C/V/Search" to="." method="_on_Search_pressed"]
+[node name="Cancel" type="TextureButton" parent="SearchDialog/M/V"]
+margin_left = 4.0
+margin_top = 68.0
+margin_right = 194.0
+margin_bottom = 113.0
+size_flags_horizontal = 4
+texture_normal = ExtResource( 7 )
+texture_pressed = ExtResource( 8 )
+
+[node name="Label" type="Label" parent="SearchDialog/M/V/Cancel"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -61.5
+margin_top = -7.0
+margin_right = 61.5
+margin_bottom = 7.0
+text = "Cancel search"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="pressed" from="C/P/M/V/Search" to="." method="_on_Search_pressed"]
 [connection signal="pressed" from="SearchDialog/M/V/Cancel" to="." method="_on_Cancel_pressed"]

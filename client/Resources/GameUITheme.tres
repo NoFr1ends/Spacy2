@@ -1,0 +1,37 @@
+[gd_resource type="Theme" load_steps=7 format=2]
+
+[ext_resource path="res://Assets/UI/grey_box.png" type="Texture" id=1]
+[ext_resource path="res://Assets/UI/blue_boxTick.png" type="Texture" id=2]
+[ext_resource path="res://Assets/UI/blue_boxCross.png" type="Texture" id=3]
+[ext_resource path="res://Resources/KF_12_o1.tres" type="DynamicFont" id=4]
+[ext_resource path="res://Assets/UI/red_panel.png" type="Texture" id=5]
+
+[sub_resource type="StyleBoxTexture" id=1]
+texture = ExtResource( 5 )
+region_rect = Rect2( 0, 0, 100, 100 )
+margin_left = 5.79744
+margin_right = 6.32448
+margin_top = 5.2704
+margin_bottom = 6.06096
+
+[resource]
+default_font = ExtResource( 4 )
+CheckBox/colors/font_color = Color( 0.88, 0.88, 0.88, 1 )
+CheckBox/colors/font_color_disabled = Color( 0.9, 0.9, 0.9, 0.2 )
+CheckBox/colors/font_color_hover = Color( 0.94, 0.94, 0.94, 1 )
+CheckBox/colors/font_color_hover_pressed = Color( 1, 1, 1, 1 )
+CheckBox/colors/font_color_pressed = Color( 1, 1, 1, 1 )
+CheckBox/constants/check_vadjust = 0
+CheckBox/constants/hseparation = 4
+CheckBox/fonts/font = ExtResource( 4 )
+CheckBox/icons/checked = ExtResource( 3 )
+CheckBox/icons/radio_checked = ExtResource( 2 )
+CheckBox/icons/radio_unchecked = ExtResource( 1 )
+CheckBox/icons/unchecked = ExtResource( 1 )
+CheckBox/styles/disabled = null
+CheckBox/styles/focus = null
+CheckBox/styles/hover = null
+CheckBox/styles/hover_pressed = null
+CheckBox/styles/normal = null
+CheckBox/styles/pressed = null
+PopupDialog/styles/panel = SubResource( 1 )
