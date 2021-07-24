@@ -52,6 +52,14 @@ remote func authorize(auth_token):
 	print(peer_id, " authorized")
 	rpc_id(peer_id, "authorized")
 
-remote func sync_time(client_time):
+remote func handshake(client_time, delta):
 	var peer_id = get_tree().multiplayer.get_rpc_sender_id()
-	rpc_id(peer_id, "sync_time", OS.get_system_time_msecs(), client_time)
+	var time = OS.get_system_time_msecs()
+	var difference = time - (client_time + delta)
+	if difference >= 0 and difference <= 50:
+		print("Handshaking done, difference is ", difference)
+		rpc_id(peer_id, "handshake_done")
+		return
+	
+	delta = (time - client_time) / 2
+	rpc_id(peer_id, "handshake", time, delta)
