@@ -27,3 +27,6 @@ rotation = 1.5708
 texture = ExtResource( 1 )
 
 [node name="Tween" type="Tween" parent="."]
+
+[node name="ShootSpawnPosition" type="Position2D" parent="."]
+position = Vector2( 38, 0 )
