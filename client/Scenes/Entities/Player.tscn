@@ -8,7 +8,6 @@ script = ExtResource( 2 )
 
 [node name="Camera2D" type="Camera2D" parent="."]
 current = true
-smoothing_enabled = true
 
 [node name="Sprite" type="Sprite" parent="."]
 rotation = 1.5708
