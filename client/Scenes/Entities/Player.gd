@@ -15,6 +15,8 @@ onready var tween = $Tween
 onready var laser = preload("res://Scenes/Entities/Laser.tscn")
 var shoot_cooldown = 0
 
+var boosting = false setget set_boosting
+
 func _ready():
 	if is_own_player:
 		$Camera2D.current = true
@@ -22,20 +24,14 @@ func _ready():
 func _process(delta):
 	if not is_own_player:
 		return
+	
 	look_at(get_global_mouse_position())
 	
-	if Input.is_action_just_pressed("boost"):
-		tween.interpolate_property(booster_left, "modulate", Color(1, 1, 1, 0), Color(1, 1, 1, 1), booster_time, Tween.TRANS_CIRC, Tween.EASE_OUT)
-		tween.interpolate_property(booster_right, "modulate", Color(1, 1, 1, 0), Color(1, 1, 1, 1), booster_time, Tween.TRANS_CIRC, Tween.EASE_OUT)
-		tween.start()
-	if Input.is_action_just_released("boost"):
-		tween.interpolate_property(booster_left, "modulate", Color(1, 1, 1, 1), Color(1, 1, 1, 0), booster_time, Tween.TRANS_CIRC, Tween.EASE_OUT)
-		tween.interpolate_property(booster_right, "modulate", Color(1, 1, 1, 1), Color(1, 1, 1, 0), booster_time, Tween.TRANS_CIRC, Tween.EASE_OUT)
-		tween.start()
+	self.boosting = Input.is_action_pressed("boost")
 	
-	if Input.is_action_pressed("boost"):
+	if boosting:
 		position += (Vector2.RIGHT * move_speed).rotated(rotation) * delta
-		
+	
 	if shoot_cooldown > 0:
 		shoot_cooldown -= delta
 	
@@ -54,10 +50,23 @@ func _physics_process(delta):
 			"R": rotation,
 			"T": GameServer.client_clock
 		})
-		
-func sync_state(position, rotation):
+
+func set_boosting(new_val):
+	if new_val != boosting:
+		if new_val:
+			tween.interpolate_property(booster_left, "modulate", Color(1, 1, 1, 0), Color(1, 1, 1, 1), booster_time, Tween.TRANS_CIRC, Tween.EASE_OUT)
+			tween.interpolate_property(booster_right, "modulate", Color(1, 1, 1, 0), Color(1, 1, 1, 1), booster_time, Tween.TRANS_CIRC, Tween.EASE_OUT)
+			tween.start()
+		else:
+			tween.interpolate_property(booster_left, "modulate", Color(1, 1, 1, 1), Color(1, 1, 1, 0), booster_time, Tween.TRANS_CIRC, Tween.EASE_OUT)
+			tween.interpolate_property(booster_right, "modulate", Color(1, 1, 1, 1), Color(1, 1, 1, 0), booster_time, Tween.TRANS_CIRC, Tween.EASE_OUT)
+			tween.start()
+	boosting = new_val
+
+func sync_state(position, rotation, boosting):
 	if is_own_player:
 		printerr("Sync state for our own ship?!")
 		return
 	self.position = position
 	self.rotation = rotation
+	self.boosting = boosting

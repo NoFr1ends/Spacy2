@@ -52,7 +52,8 @@ func _physics_process(delta):
 				if p:
 					p.sync_state(
 						lerp(world_state_buffer[1].P[player].P, world_state_buffer[2].P[player].P, interpolation_factor),
-						lerp(world_state_buffer[1].P[player].R, world_state_buffer[2].P[player].R, interpolation_factor)
+						lerp(world_state_buffer[1].P[player].R, world_state_buffer[2].P[player].R, interpolation_factor),
+						world_state_buffer[1].P[player].P != world_state_buffer[2].P[player].P
 					)
 				else:
 					print("Spawn ship for player ", player)
@@ -78,11 +79,12 @@ func _physics_process(delta):
 					
 				var p = get_player(player)
 				if p:
-					var position_delta = world_state_buffer[1].P[player].P - world_state_buffer[0].P[player].P
+					var position_delta: Vector2 = world_state_buffer[1].P[player].P - world_state_buffer[0].P[player].P
 					var rotation_delta = world_state_buffer[1].P[player].R - world_state_buffer[0].P[player].R
 					p.sync_state(
 						world_state_buffer[1].P[player].P + (position_delta * extrapolation_factor),
-						world_state_buffer[1].P[player].R + (rotation_delta * extrapolation_factor)
+						world_state_buffer[1].P[player].R + (rotation_delta * extrapolation_factor),
+						position_delta.length_squared() > 0
 					)
 
 func get_player(player_id):
