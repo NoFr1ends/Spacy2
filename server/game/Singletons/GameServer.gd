@@ -1,3 +1,4 @@
+class_name GameServer
 extends Node
 
 onready var players = $Players
@@ -134,3 +135,6 @@ remote func shoot(position: Vector2, rotation: float):
 	
 	projectile_id += 1
 	rpc_id(peer_id, "spawn_projectile", projectile.id, position, rotation)
+
+func send_hit(peer_id, by_entity_id):
+	rpc_id(peer_id, "despawn_projectile", by_entity_id)

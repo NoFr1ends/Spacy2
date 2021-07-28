@@ -29,6 +29,7 @@ func _ready():
 	GameServer.connect("game_state", self, "_on_GameServer_game_state")
 	GameServer.connect("spawn", self, "_on_GameServer_spawn")
 	GameServer.connect("spawn_entity", self, "_on_GameServer_spawn_entity")
+	GameServer.connect("despawn_entity", self, "_on_GameServer_despawn_entity")
 
 func _physics_process(delta):
 	if player:
@@ -157,3 +158,18 @@ func _on_GameServer_spawn_entity(entity_type, id, position, rotation):
 		instance.rotation = rotation
 		instance.name = "Projectile" + str(id)
 		$Projectiles.add_child(instance)
+
+func _on_GameServer_despawn_entity(entity_type, id):
+	if entity_type == "projectile":
+		var p = get_projectile(id)
+		if p:
+			p.visible = false
+			# We have to delay despawning our own projectile for a short time
+			# to prevent them from respawning due to world sync
+			yield(get_tree().create_timer(interpolation_offset / 1000.0 * 2), "timeout")
+			if is_instance_valid(p):
+				p.queue_free()
+	if entity_type == "player":
+		var p = get_player(id)
+		if p:
+			p.queue_free()

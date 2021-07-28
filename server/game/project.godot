@@ -9,6 +9,11 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Node",
+"class": "GameServer",
+"language": "GDScript",
+"path": "res://Singletons/GameServer.gd"
+}, {
 "base": "Node2D",
 "class": "Laser",
 "language": "GDScript",
@@ -20,6 +25,7 @@ _global_script_classes=[ {
 "path": "res://Scenes/Entities/Player.gd"
 } ]
 _global_script_class_icons={
+"GameServer": "",
 "Laser": "",
 "Player": ""
 }
