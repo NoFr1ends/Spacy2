@@ -47,6 +47,7 @@ func _physics_process(delta):
 			var interpolation_factor = float(render_time - world_state_buffer[1].T) / float(world_state_buffer[2].T - world_state_buffer[1].T)
 			for player in world_state_buffer[2].P.keys():
 				if player == get_tree().get_network_unique_id():
+					self.player.health = world_state_buffer[2].P[player].H
 					continue
 				if not world_state_buffer[1].P.has(player):
 					continue # previous state was missing this player so it's new
@@ -58,11 +59,13 @@ func _physics_process(delta):
 						lerp(world_state_buffer[1].P[player].R, world_state_buffer[2].P[player].R, interpolation_factor),
 						world_state_buffer[1].P[player].P != world_state_buffer[2].P[player].P
 					)
+					p.health = world_state_buffer[2].P[player].H
 				else:
 					print("Spawn ship for player ", player)
 					var instance = player_template.instance()
 					instance.position = lerp(world_state_buffer[1].P[player].P, world_state_buffer[2].P[player].P, interpolation_factor)
 					instance.rotation = lerp(world_state_buffer[1].P[player].R, world_state_buffer[2].P[player].R, interpolation_factor)
+					instance.health = world_state_buffer[2].P[player].H
 					instance.name = "Player" + str(player)
 					$Players.add_child(instance)
 			for projectile in world_state_buffer[2].PP.keys():

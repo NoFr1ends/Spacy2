@@ -25,6 +25,7 @@ func _physics_process(delta):
 	if result:
 		print("Projectile hit ", result)
 		gameserver.send_hit(peer_id, id)
+		result.collider.damage(peer_id, 10)
 		queue_free()
 	
 	position = new_position
