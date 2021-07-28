@@ -1,5 +1,7 @@
 extends Node
 
+onready var players = $Players
+
 var network = NetworkedMultiplayerENet.new()
 
 var mode = ""
@@ -37,8 +39,16 @@ func _on_peer_connected(peer_id):
 		return
 	print("new connection ", peer_id)
 	
+	if not "test" in allowed_players:
+		pass
+	
 func _on_peer_disconnected(peer_id):
 	print("connection closed ", peer_id)
+	
+	# check if player has a player instance
+	var player = players.get_node_or_null("Player" + str(peer_id))
+	if player:
+		player.queue_free()
 
 remote func authorize(auth_token):
 	# TODO: parse auth token (JWT) and verify it
@@ -51,6 +61,14 @@ remote func authorize(auth_token):
 	
 	print(peer_id, " authorized")
 	rpc_id(peer_id, "authorized")
+	
+	# Spawn player in random position in the play area
+	var player = Player.new()
+	player.position = Vector2(rand_range(0, 10000), rand_range(0, 10000))
+	player.peer_id = peer_id
+	player.name = "Player" + str(peer_id)
+	players.add_child(player)
+	rpc_id(peer_id, "spawn", player.create_state())
 
 remote func handshake(client_time, delta):
 	var peer_id = get_tree().multiplayer.get_rpc_sender_id()
@@ -63,3 +81,22 @@ remote func handshake(client_time, delta):
 	
 	delta = (time - client_time) / 2
 	rpc_id(peer_id, "handshake", time, delta)
+
+remote func recv_state(state):
+	var peer_id = get_tree().multiplayer.get_rpc_sender_id()
+	var player = players.get_node_or_null("Player" + str(peer_id))
+	if not player:
+		printerr("Received state from peer ", peer_id, " without having a player instance")
+		network.disconnect_peer(peer_id)
+		return
+	
+	player.sync_state(state)
+
+func _physics_process(delta):
+	var world_state = {
+		"T": OS.get_system_time_msecs(),
+		"P": {}
+	}
+	for player in players.get_children():
+		world_state.P[player.peer_id] = player.create_state()
+	rpc_unreliable("state", world_state)

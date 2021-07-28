@@ -8,8 +8,14 @@
 
 config_version=4
 
-_global_script_classes=[  ]
+_global_script_classes=[ {
+"base": "Node2D",
+"class": "Player",
+"language": "GDScript",
+"path": "res://Scenes/Entities/Player.gd"
+} ]
 _global_script_class_icons={
+"Player": ""
 }
 
 [application]
@@ -21,6 +27,10 @@ config/icon="res://icon.png"
 [autoload]
 
 Agones="*res://Singletons/Agones.gd"
+
+[physics]
+
+common/physics_fps=20
 
 [rendering]
 

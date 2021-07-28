@@ -5,6 +5,7 @@ export var booster_time = 0.3
 export var shoot_delay = 0.1
 
 export var team_color = "blue"
+export var is_own_player = false
 
 onready var booster_left = $BoosterLeft
 onready var booster_right = $BoosterRight
@@ -14,7 +15,13 @@ onready var tween = $Tween
 onready var laser = preload("res://Scenes/Entities/Laser.tscn")
 var shoot_cooldown = 0
 
+func _ready():
+	if is_own_player:
+		$Camera2D.current = true
+
 func _process(delta):
+	if not is_own_player:
+		return
 	look_at(get_global_mouse_position())
 	
 	if Input.is_action_just_pressed("boost"):
@@ -40,4 +47,17 @@ func _process(delta):
 		shoot_cooldown = shoot_delay
 
 func _physics_process(delta):
-	pass
+	if is_own_player:
+		# Send player state to server
+		GameServer.send_state({
+			"P": position,
+			"R": rotation,
+			"T": GameServer.client_clock
+		})
+		
+func sync_state(position, rotation):
+	if is_own_player:
+		printerr("Sync state for our own ship?!")
+		return
+	self.position = position
+	self.rotation = rotation
