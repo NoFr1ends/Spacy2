@@ -2,17 +2,17 @@ extends Node2D
 
 export var speed = 1000
 
+var id = 0
+var own = false
 var lifetime = 10.0
 
-func _ready():
-	pass # Replace with function body.
-
 func _process(delta):
-	lifetime -= delta
-	
-	if lifetime <= 0:
-		print(lifetime)
-		queue_free()
+	if own:
+		lifetime -= delta
+		
+		if lifetime <= 0:
+			queue_free()
 
 func _physics_process(delta):
-	position += Vector2(speed, 0).rotated(rotation) * delta
+	if own:
+		position += Vector2(speed, 0).rotated(rotation) * delta

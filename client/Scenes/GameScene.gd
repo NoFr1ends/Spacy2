@@ -1,6 +1,7 @@
 extends Node2D
 
 onready var player_template = preload("res://Scenes/Entities/Player.tscn")
+onready var laser_template = preload("res://Scenes/Entities/Laser.tscn")
 onready var debug_position = $UI/Debug/Position
 onready var debug_network = $UI/Debug/Network
 
@@ -27,6 +28,7 @@ func _ready():
 	GameServer.connect("match_start", self, "_on_GameServer_match_start")
 	GameServer.connect("game_state", self, "_on_GameServer_game_state")
 	GameServer.connect("spawn", self, "_on_GameServer_spawn")
+	GameServer.connect("spawn_entity", self, "_on_GameServer_spawn_entity")
 
 func _physics_process(delta):
 	if player:
@@ -62,6 +64,25 @@ func _physics_process(delta):
 					instance.rotation = lerp(world_state_buffer[1].P[player].R, world_state_buffer[2].P[player].R, interpolation_factor)
 					instance.name = "Player" + str(player)
 					$Players.add_child(instance)
+			for projectile in world_state_buffer[2].PP.keys():
+				if not world_state_buffer[1].PP.has(projectile):
+					continue
+				
+				var p = get_projectile(projectile)
+				if p:
+					if not p.own:
+						p.position = lerp(world_state_buffer[1].PP[projectile].P, world_state_buffer[2].PP[projectile].P, interpolation_factor)
+						p.rotation = lerp(world_state_buffer[1].PP[projectile].R, world_state_buffer[2].PP[projectile].R, interpolation_factor)
+				else:
+					var instance = laser_template.instance()
+					instance.position = lerp(world_state_buffer[1].PP[projectile].P, world_state_buffer[2].PP[projectile].P, interpolation_factor)
+					instance.rotation = lerp(world_state_buffer[1].PP[projectile].R, world_state_buffer[2].PP[projectile].R, interpolation_factor)
+					instance.name = "Projectile" + str(projectile)
+					instance.id = projectile
+					$Projectiles.add_child(instance)
+			for projectile in $Projectiles.get_children():
+				if not projectile.own and not world_state_buffer[2].PP.has(projectile.id):
+					projectile.queue_free()
 		else: # We have to extrapolate
 			if render_time - world_state_buffer[1].T > 5000:
 				printerr("No world state in 5 seconds!")
@@ -86,9 +107,22 @@ func _physics_process(delta):
 						world_state_buffer[1].P[player].R + (rotation_delta * extrapolation_factor),
 						position_delta.length_squared() > 0
 					)
+			for projectile in world_state_buffer[1].PP.keys():
+				if not world_state_buffer[0].PP.has(projectile):
+					continue
+				
+				var p = get_projectile(projectile)
+				if p and not p.own:
+					var position_delta: Vector2 = world_state_buffer[1].PP[projectile].P - world_state_buffer[0].PP[projectile].P
+					var rotation_delta = world_state_buffer[1].PP[projectile].R - world_state_buffer[0].PP[projectile].R
+					p.position = world_state_buffer[1].PP[projectile].P + (position_delta * extrapolation_factor)
+					p.rotation = world_state_buffer[1].PP[projectile].R + (rotation_delta * extrapolation_factor)
 
 func get_player(player_id):
 	return $Players.get_node_or_null("Player" + str(player_id))
+
+func get_projectile(projectile_id):
+	return $Projectiles.get_node_or_null("Projectile" + str(projectile_id))
 
 func _on_GameServer_connected():
 	print("Connected and authorized at gameserver, waiting for match to start")
@@ -113,3 +147,13 @@ func _on_GameServer_spawn(details):
 	player.rotation = details.R
 	player.is_own_player = true
 	$Players.add_child(player)
+
+func _on_GameServer_spawn_entity(entity_type, id, position, rotation):
+	if entity_type == "projectile":
+		var instance = laser_template.instance()
+		instance.own = true
+		instance.id = id
+		instance.position = position
+		instance.rotation = rotation
+		instance.name = "Projectile" + str(id)
+		$Projectiles.add_child(instance)

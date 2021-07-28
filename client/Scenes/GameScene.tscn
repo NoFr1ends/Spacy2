@@ -15,6 +15,8 @@ motion_mirroring = Vector2( 1024, 512 )
 script = ExtResource( 4 )
 texture = ExtResource( 3 )
 
+[node name="Projectiles" type="Node2D" parent="."]
+
 [node name="Players" type="Node2D" parent="."]
 
 [node name="UI" type="CanvasLayer" parent="."]

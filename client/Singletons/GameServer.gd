@@ -13,6 +13,7 @@ signal connected()
 signal match_start()
 signal game_state(state)
 signal spawn(details)
+signal spawn_entity(entity_type, id, position, rotation)
 
 func _ready():
 	network.connect("connection_succeeded", self, "_on_connection_succeeded")
@@ -83,3 +84,13 @@ func send_state(state):
 	
 remote func state(state):
 	emit_signal("game_state", state)
+
+#################################
+# P L A Y E R A C T I O N S
+#################################
+
+func shoot(position, rotation):
+	rpc_id(1, "shoot", position, rotation)
+	
+remote func spawn_projectile(id, position, rotation):
+	emit_signal("spawn_entity", "projectile", id, position, rotation)

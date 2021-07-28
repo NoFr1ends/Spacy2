@@ -36,10 +36,11 @@ func _process(delta):
 		shoot_cooldown -= delta
 	
 	if Input.is_action_just_pressed("shoot") and shoot_cooldown <= 0:
-		var sprite = laser.instance()
-		sprite.position = to_global(shoot_spawn_position.position)
-		sprite.rotation_degrees = rotation_degrees
-		get_parent().add_child(sprite)
+		GameServer.shoot(to_global(shoot_spawn_position.position), rotation)
+		#var sprite = laser.instance()
+		#sprite.position = to_global(shoot_spawn_position.position)
+		#sprite.rotation_degrees = rotation_degrees
+		#get_parent().add_child(sprite)
 		shoot_cooldown = shoot_delay
 
 func _physics_process(delta):
