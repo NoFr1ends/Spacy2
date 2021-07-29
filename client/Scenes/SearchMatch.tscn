@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://Scenes/SearchMatch.gd" type="Script" id=1]
 [ext_resource path="res://Resources/KF_12_o1.tres" type="DynamicFont" id=2]
@@ -8,6 +8,8 @@
 [ext_resource path="res://Resources/KF_12.tres" type="DynamicFont" id=6]
 [ext_resource path="res://Assets/UI/red_button00.png" type="Texture" id=7]
 [ext_resource path="res://Assets/UI/red_button02.png" type="Texture" id=8]
+[ext_resource path="res://Scenes/Helpers/TilingBackground.gd" type="Script" id=9]
+[ext_resource path="res://Assets/Game/Backgrounds/black.png" type="Texture" id=10]
 
 [sub_resource type="StyleBoxTexture" id=1]
 texture = ExtResource( 3 )
@@ -24,6 +26,10 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Background" type="ParallaxLayer" parent="."]
+script = ExtResource( 9 )
+texture = ExtResource( 10 )
 
 [node name="DEV" type="Button" parent="."]
 margin_left = 10.0

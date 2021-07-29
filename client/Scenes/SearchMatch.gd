@@ -53,6 +53,8 @@ func _on_Search_pressed():
 	var result = yield(Matchmaking.search_match(modes), "completed")
 	if not result:
 		printerr("Search for match failed!")
+		dialog.hide() # todo: show error message
+		fadeout.visible = false
 		return
 		
 	searching = true

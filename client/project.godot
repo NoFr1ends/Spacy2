@@ -11,13 +11,14 @@ config_version=4
 [application]
 
 config/name="Spacy"
-run/main_scene="res://Scenes/SearchMatch.tscn"
+run/main_scene="res://Scenes/Login.tscn"
 config/icon="res://icon.png"
 
 [autoload]
 
 Matchmaking="*res://Singletons/Matchmaking.gd"
 GameServer="*res://Singletons/GameServer.gd"
+Authorization="*res://Singletons/Authorization.gd"
 
 [gui]
 

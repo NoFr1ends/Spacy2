@@ -21,7 +21,10 @@ func search_match(modes):
 	
 	var request = HTTPRequest.new()
 	add_child(request)
-	request.request(matchmaking_server + "/search", ["Content-Type: application/json"], false, HTTPClient.METHOD_POST, JSON.print({
+	request.request(matchmaking_server + "/search", [
+		"Content-Type: application/json", 
+		"Authorization: Bearer " + Authorization.token
+	], false, HTTPClient.METHOD_POST, JSON.print({
 		"gameModes": modes
 	}))
 	var result = yield(request, "request_completed")
@@ -54,7 +57,9 @@ func cancel_search():
 	
 	var request = HTTPRequest.new()
 	add_child(request)
-	request.request(matchmaking_server + "/ticket/" + ticket_id + "/cancel")
+	request.request(matchmaking_server + "/ticket/" + ticket_id + "/cancel", [
+		"Authorization: Bearer " + Authorization.token
+	])
 	var result = yield(request, "request_completed")
 	
 	if result[1] != 204:
@@ -65,7 +70,9 @@ func _on_assignment_timer():
 	
 	var request = HTTPRequest.new()
 	add_child(request)
-	request.request(matchmaking_server + "/ticket/" + ticket_id)
+	request.request(matchmaking_server + "/ticket/" + ticket_id, [
+		"Authorization: Bearer " + Authorization.token
+	])
 	var result = yield(request, "request_completed")
 	request.queue_free()
 	
