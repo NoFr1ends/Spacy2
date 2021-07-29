@@ -1,7 +1,6 @@
 extends Node
 
 var address = ""
-var auth_token = ""
 var network = NetworkedMultiplayerENet.new()
 
 # Timing
@@ -69,8 +68,7 @@ remote func handshake(time, delta):
 	
 remote func handshake_done():
 	print("handshake done, final delta is ", time_difference)
-	rpc_id(1, "authorize", auth_token)
-	auth_token = ""
+	rpc_id(1, "authorize", Authorization.token)
 	
 #################################
 # W O R L D S Y N C
