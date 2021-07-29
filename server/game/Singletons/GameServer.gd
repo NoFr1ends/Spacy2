@@ -55,6 +55,8 @@ func _on_peer_disconnected(peer_id):
 	var player = get_player(peer_id)
 	if player:
 		player.queue_free()
+		rpc("despawn_player", peer_id)
+		
 
 func _physics_process(delta):
 	var world_state = {

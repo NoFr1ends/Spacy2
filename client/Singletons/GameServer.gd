@@ -86,6 +86,9 @@ func send_state(state):
 remote func state(state):
 	emit_signal("game_state", state)
 
+remote func despawn_player(id):
+	emit_signal("despawn_entity", "player", id)
+
 #################################
 # P L A Y E R A C T I O N S
 #################################
