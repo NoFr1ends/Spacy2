@@ -80,7 +80,10 @@ remote func authorize(auth_token):
 	# TODO: parse auth token (JWT) and verify it
 	var peer_id = get_tree().multiplayer.get_rpc_sender_id()
 	
-	if not auth_token in allowed_players:
+	var jwt = JWT.new()
+	jwt.parse(auth_token, "test123") # todo: read secret from server configuration
+	
+	if not jwt.is_valid() or jwt.signing_method != "HS256" or not jwt.claims["username"] in allowed_players:
 		printerr("Player is not allowed on this server!")
 		network.disconnect_peer(peer_id)
 		return
