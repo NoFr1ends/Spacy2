@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"github.com/golang-jwt/jwt"
 	"github.com/gorilla/mux"
 	"google.golang.org/grpc"
 	"log"
@@ -13,12 +14,50 @@ import (
 	"time"
 )
 
+type LoginRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type LoginResponse struct {
+	Status bool `json:"status"`
+	Token string `json:"token"`
+}
+
 type SearchMatch struct {
-	GameModes []string
+	GameModes []string `json:"gameModes"`
 }
 
 type SearchMatchResult struct {
 	Id string `json:"id"`
+}
+
+func LoginHandler(w http.ResponseWriter, r *http.Request) {
+	var request LoginRequest
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// todo: verify username and password
+
+	var signingKey = []byte("test123") // todo: implement option to set jwt secret
+
+	token := jwt.New(jwt.SigningMethodHS256)
+	claims := token.Claims.(jwt.MapClaims)
+	claims["username"] = request.Username
+	claims["exp"] = time.Now().Add(time.Minute * 30).Unix()
+
+	tokenString, err := token.SignedString(signingKey)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	response := LoginResponse{Status: true, Token: tokenString}
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func SearchHandler(w http.ResponseWriter, r *http.Request) {
@@ -91,9 +130,10 @@ func main() {
 
 	// Create http server which is used in the game client
 	r := mux.NewRouter()
-	r.HandleFunc("/search", SearchHandler)
-	r.HandleFunc("/ticket/{ticket}", TicketHandler)
-	r.HandleFunc("/ticket/{ticket}/cancel", CancelHandler)
+	r.HandleFunc("/login", LoginHandler).Methods("POST")
+	r.HandleFunc("/search", SearchHandler).Methods("POST")
+	r.HandleFunc("/ticket/{ticket}", TicketHandler).Methods("GET")
+	r.HandleFunc("/ticket/{ticket}/cancel", CancelHandler).Methods("GET")
 
 	srv := &http.Server {
 		Handler: r,
