@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/golang-jwt/jwt"
 	"github.com/gorilla/mux"
 	"google.golang.org/grpc"
@@ -11,8 +12,11 @@ import (
 	"open-match.dev/open-match/pkg/pb"
 	"os"
 	"os/signal"
+	"strings"
 	"time"
 )
+
+var signingKey = []byte("test123") // todo: implement option to set jwt secret
 
 type LoginRequest struct {
 	Username string `json:"username"`
@@ -40,8 +44,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// todo: verify username and password
-
-	var signingKey = []byte("test123") // todo: implement option to set jwt secret
 
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
@@ -112,6 +114,37 @@ func CancelHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(204)
 }
 
+func CheckLogin(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		token := r.Header.Get("Authorization")
+
+		if !strings.HasPrefix(token, "Bearer ") {
+			http.Error(w, "Forbidden", http.StatusForbidden)
+			return
+		}
+
+		jwtTokenString := token[7:]
+		jwtToken, err := jwt.Parse(jwtTokenString, func(token *jwt.Token) (interface{}, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, fmt.Errorf("there was an error in parsing the token")
+			}
+			return signingKey, nil
+		})
+
+		if err != nil {
+			http.Error(w, "Forbidden", http.StatusForbidden)
+			return
+		}
+
+		if claims, ok := jwtToken.Claims.(jwt.MapClaims); ok && jwtToken.Valid {
+			r.Header.Set("Username", claims["username"].(string))
+			next.ServeHTTP(w, r)
+			return
+		}
+		http.Error(w, "Forbidden", http.StatusForbidden)
+	}
+}
+
 var fe pb.FrontendServiceClient
 
 func main() {
@@ -131,9 +164,9 @@ func main() {
 	// Create http server which is used in the game client
 	r := mux.NewRouter()
 	r.HandleFunc("/login", LoginHandler).Methods("POST")
-	r.HandleFunc("/search", SearchHandler).Methods("POST")
-	r.HandleFunc("/ticket/{ticket}", TicketHandler).Methods("GET")
-	r.HandleFunc("/ticket/{ticket}/cancel", CancelHandler).Methods("GET")
+	r.HandleFunc("/search", CheckLogin(SearchHandler)).Methods("POST")
+	r.HandleFunc("/ticket/{ticket}", CheckLogin(TicketHandler)).Methods("GET")
+	r.HandleFunc("/ticket/{ticket}/cancel", CheckLogin(CancelHandler)).Methods("GET")
 
 	srv := &http.Server {
 		Handler: r,
