@@ -8,11 +8,12 @@ export var max_health = 100
 export var team_color = "blue"
 export var is_own_player = false
 
-onready var booster_left = $BoosterLeft
-onready var booster_right = $BoosterRight
+onready var booster_left = $Ship/BoosterLeft
+onready var booster_right = $Ship/BoosterRight
 onready var shoot_spawn_position = $ShootSpawnPosition
 onready var tween = $Tween
 onready var health_bar = $HealthBar
+onready var direction_arrow = $DirectionArrow
 
 onready var laser = preload("res://Scenes/Entities/Laser.tscn")
 var shoot_cooldown = 0
@@ -25,6 +26,8 @@ var health = 100 setget set_health
 func _ready():
 	if is_own_player:
 		$Camera2D.current = true
+	else:
+		direction_arrow.visible = true
 	health_bar.max_value = max_health
 	health_bar.value = health
 
@@ -38,6 +41,29 @@ func _process(delta):
 		if health_fade_out <= 0:
 			tween.interpolate_property(health_bar, "modulate", Color(1, 1, 1, 1), Color(1, 1, 1, 0), 0.2, Tween.TRANS_LINEAR)
 			tween.start()
+	
+	if direction_arrow.visible:
+		for camera in get_tree().get_nodes_in_group("cameras"):
+			if camera.current:
+				var center: Vector2 = camera.get_camera_screen_center()
+				var size = get_viewport().size
+				if position.y < center.y:
+					var top = Geometry.line_intersects_line_2d(Vector2(center.x - size.x / 2, center.y - size.y / 2 + 30), Vector2.RIGHT, center, center.direction_to(position))
+					if top and top.x <= center.x + size.x / 2 and top.x >= center.x - size.x / 2:
+						direction_arrow.position = to_local(top)
+				if position.y > center.y:
+					var bottom = Geometry.line_intersects_line_2d(Vector2(center.x - size.x / 2, center.y + size.y / 2 - 30), Vector2.RIGHT, center, center.direction_to(position))
+					if bottom and bottom.x <= center.x + size.x / 2 and bottom.x >= center.x - size.x / 2:
+						direction_arrow.position = to_local(bottom)
+				if position.x < center.x:
+					var left = Geometry.line_intersects_line_2d(Vector2(center.x - size.x / 2 + 30, center.y - size.y / 2), Vector2.DOWN, center, center.direction_to(position))
+					if left and left.y <= center.y + size.y / 2 and left.y >= center.y - size.y / 2:
+						direction_arrow.position = to_local(left)
+				if position.x > center.x:
+					var right = Geometry.line_intersects_line_2d(Vector2(center.x + size.x / 2 - 30, center.y - size.y / 2), Vector2.DOWN, center, center.direction_to(position))
+					if right and right.y <= center.y + size.y / 2 and right.y >= center.y - size.y / 2:
+						direction_arrow.position = to_local(right)
+				
 	
 	if not is_own_player:
 		return
@@ -96,3 +122,11 @@ func sync_state(position, rotation, boosting):
 	self.position = position
 	self.rotation = rotation
 	self.boosting = boosting
+
+func _on_VisibilityNotifier2D_screen_entered():
+	if not is_own_player:
+		direction_arrow.visible = false
+
+func _on_VisibilityNotifier2D_screen_exited():
+	if not is_own_player:
+		direction_arrow.visible = true
