@@ -100,7 +100,9 @@ remote func authorize(auth_token):
 	
 	# Spawn player in random position in the play area
 	var player = player_template.instance()
-	player.position = Vector2(rand_range(-play_area_size, play_area_size), rand_range(-play_area_size, play_area_size))
+	var direction = Vector2.UP.rotated(rand_range(0, 2*PI))
+	var distance = rand_range(0, play_area_size)
+	player.position = direction * distance
 	player.peer_id = peer_id
 	player.name = "Player" + str(peer_id)
 	players.add_child(player)
