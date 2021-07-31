@@ -14,6 +14,7 @@ signal game_state(state)
 signal spawn(details)
 signal spawn_entity(entity_type, id, position, rotation)
 signal despawn_entity(entity_type, id)
+signal update_play_area(size)
 
 func _ready():
 	network.connect("connection_succeeded", self, "_on_connection_succeeded")
@@ -86,6 +87,9 @@ remote func state(state):
 
 remote func despawn_player(id):
 	emit_signal("despawn_entity", "player", id)
+
+remote func update_play_area(size):
+	emit_signal("update_play_area", size)
 
 #################################
 # P L A Y E R A C T I O N S

@@ -1,8 +1,36 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://Scenes/GameScene.gd" type="Script" id=1]
+[ext_resource path="res://Assets/Game/transparent1x1.png" type="Texture" id=2]
 [ext_resource path="res://Assets/Game/Backgrounds/black.png" type="Texture" id=3]
 [ext_resource path="res://Scenes/Helpers/TilingBackground.gd" type="Script" id=4]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type canvas_item;
+
+uniform float radius;
+uniform float fade_out;
+uniform float scale;
+
+varying vec2 world_pos;
+
+void vertex() {
+	world_pos = VERTEX * scale;
+}
+
+void fragment() {
+	COLOR = vec4(1f, 0f, 0f, 0f);
+	float dist = distance(world_pos, vec2(0f, 0f));
+	if(dist >= radius) {
+		COLOR.a = min(1.0f, (dist - radius) / fade_out); 
+	}
+}"
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = SubResource( 1 )
+shader_param/radius = 1000.0
+shader_param/fade_out = 1000.0
+shader_param/scale = 4000.0
 
 [node name="GameScene" type="Node2D"]
 script = ExtResource( 1 )
@@ -14,6 +42,11 @@ motion_scale = Vector2( 0.5, 0.5 )
 motion_mirroring = Vector2( 1024, 512 )
 script = ExtResource( 4 )
 texture = ExtResource( 3 )
+
+[node name="PlayArea" type="Sprite" parent="."]
+material = SubResource( 2 )
+scale = Vector2( 4000, 4000 )
+texture = ExtResource( 2 )
 
 [node name="Projectiles" type="Node2D" parent="."]
 

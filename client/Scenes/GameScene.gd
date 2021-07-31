@@ -30,10 +30,11 @@ func _ready():
 	GameServer.connect("spawn", self, "_on_GameServer_spawn")
 	GameServer.connect("spawn_entity", self, "_on_GameServer_spawn_entity")
 	GameServer.connect("despawn_entity", self, "_on_GameServer_despawn_entity")
+	GameServer.connect("update_play_area", self, "_on_GameServer_update_play_area")
 
 func _physics_process(delta):
 	if player:
-		debug_position.text = "Position: " + str(floor(player.position.x)) + "," + str(floor(player.position.y))
+		debug_position.text = "Position: " + str(floor(player.position.x)) + "," + str(floor(player.position.y)) + " (" + str(player.position.distance_to(Vector2(0, 0))) + ")"
 		if network_stats.I + network_stats.E > 0:
 			debug_network.text = "Network: " + str(round(network_stats.I / float(network_stats.I + network_stats.E) * 1000) / 10) + "%"
 		
@@ -175,4 +176,13 @@ func _on_GameServer_despawn_entity(entity_type, id):
 	if entity_type == "player":
 		var p = get_player(id)
 		if p:
-			p.queue_free()
+			p.visible = false
+			yield(get_tree().create_timer(interpolation_offset / 1000.0 * 2), "timeout")
+			if is_instance_valid(p):
+				p.queue_free()
+
+func _on_GameServer_update_play_area(size):
+	var area = $PlayArea
+	area.scale = Vector2(size * 4, size * 4)
+	area.material.set_shader_param("radius", size)
+	area.material.set_shader_param("scale", size * 4)
