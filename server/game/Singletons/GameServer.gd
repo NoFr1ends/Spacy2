@@ -16,6 +16,8 @@ var allowed_players = []
 var projectile_id = 0
 var play_area_size = area_per_player
 
+var mode_controller = null
+
 func _ready():
 	network.server_relay = false
 	start_server()
@@ -41,15 +43,20 @@ func _on_gameserver(gameserver):
 	print("Mode: ", mode)
 	print("Allowed Players: ", allowed_players)
 	
+	if mode_controller:
+		mode_controller.queue_free()
+	if mode == "ffa":
+		mode_controller = FreeForAll.new()
+		mode_controller.name = "FreeForAllGameMode"
+		mode_controller.connect("end_game", self, "_on_mode_end_game")
+		add_child(mode_controller)
+	
 func _on_peer_connected(peer_id):
 	if mode == "":
 		# We aren't ready to accept connections yet
 		network.disconnect_peer(peer_id)
 		return
 	print("new connection ", peer_id)
-	
-	if not "test" in allowed_players:
-		pass
 	
 func _on_peer_disconnected(peer_id):
 	print("connection closed ", peer_id)
@@ -59,7 +66,10 @@ func _on_peer_disconnected(peer_id):
 	if player:
 		player.queue_free()
 		rpc("despawn_player", peer_id)
-		
+
+func _on_mode_end_game():
+	print("Game finished!")
+	mode_controller = null
 
 func _physics_process(delta):
 	var world_state = {
@@ -67,6 +77,8 @@ func _physics_process(delta):
 		"P": {},
 		"PP": {},
 	}
+	if mode_controller:
+		world_state["M"] = mode_controller.create_state()
 	
 	for player in players.get_children():
 		world_state.P[player.peer_id] = player.create_state()

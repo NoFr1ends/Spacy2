@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Scenes/GameScene.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Game/transparent1x1.png" type="Texture" id=2]
 [ext_resource path="res://Assets/Game/Backgrounds/black.png" type="Texture" id=3]
 [ext_resource path="res://Scenes/Helpers/TilingBackground.gd" type="Script" id=4]
+[ext_resource path="res://Resources/KF_24_o1.tres" type="DynamicFont" id=5]
 
 [sub_resource type="Shader" id=1]
 code = "shader_type canvas_item;
@@ -74,3 +75,14 @@ margin_top = 18.0
 margin_right = 114.0
 margin_bottom = 32.0
 text = "Network: 100%"
+
+[node name="TimeLeft" type="Label" parent="UI"]
+anchor_right = 1.0
+margin_top = 5.0
+margin_bottom = 32.0
+custom_fonts/font = ExtResource( 5 )
+text = "--:--"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}

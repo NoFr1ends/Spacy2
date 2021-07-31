@@ -4,6 +4,7 @@ onready var player_template = preload("res://Scenes/Entities/Player.tscn")
 onready var laser_template = preload("res://Scenes/Entities/Laser.tscn")
 onready var debug_position = $UI/Debug/Position
 onready var debug_network = $UI/Debug/Network
+onready var time_left = $UI/TimeLeft
 
 const interpolation_offset = 100
 
@@ -42,6 +43,13 @@ func _physics_process(delta):
 	if world_state_buffer.size() > 1:
 		while world_state_buffer.size() > 2 and render_time > world_state_buffer[2].T:
 			world_state_buffer.remove(0)
+			
+		if "M" in world_state_buffer[1]:
+			var time = int(world_state_buffer[1].M.T)
+			var minutes = time / 60
+			var seconds = time % 60
+			time_left.text = str(minutes).pad_zeros(2) + ":" + str(seconds).pad_zeros(2)
+			
 		if world_state_buffer.size() > 2: # We can interpolate
 			network_stats.I += 1
 			
