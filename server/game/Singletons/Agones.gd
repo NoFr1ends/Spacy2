@@ -58,6 +58,9 @@ func mark_ready():
 		return
 	print("Server marked as ready")
 
+func shutdown():
+	pass # todo implement
+
 func watch_gameserver():
 	_watch_waiting = true
 	_watch_client = HTTPClient.new()

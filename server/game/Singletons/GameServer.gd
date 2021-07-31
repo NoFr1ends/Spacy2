@@ -48,8 +48,12 @@ func _on_gameserver(gameserver):
 	if mode == "ffa":
 		mode_controller = FreeForAll.new()
 		mode_controller.name = "FreeForAllGameMode"
+		mode_controller.expected_players = allowed_players
 		mode_controller.connect("end_game", self, "_on_mode_end_game")
 		add_child(mode_controller)
+	else:
+		printerr("Unknown game mode!")
+		get_tree().quit()
 	
 func _on_peer_connected(peer_id):
 	if mode == "":
@@ -61,6 +65,8 @@ func _on_peer_connected(peer_id):
 func _on_peer_disconnected(peer_id):
 	print("connection closed ", peer_id)
 	
+	mode_controller.player_left(peer_id)
+	
 	# check if player has a player instance
 	var player = get_player(peer_id)
 	if player:
@@ -69,7 +75,8 @@ func _on_peer_disconnected(peer_id):
 
 func _on_mode_end_game():
 	print("Game finished!")
-	mode_controller = null
+	Agones.shutdown()
+	get_tree().quit()
 
 func _physics_process(delta):
 	var world_state = {
@@ -105,6 +112,8 @@ remote func authorize(auth_token):
 	
 	print(peer_id, " authorized")
 	rpc_id(peer_id, "authorized")
+	
+	mode_controller.player_joined(peer_id, jwt.claims["username"])
 	
 	play_area_size = max((players.get_child_count() + 1) * area_per_player, play_area_size) # we don't shrink the play area size
 	print("Play area size is now ", play_area_size, " in all directions from the center")
