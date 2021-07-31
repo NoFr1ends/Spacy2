@@ -7,11 +7,14 @@ onready var projectiles = $Projectiles
 onready var player_template = preload("res://Scenes/Entities/Player.tscn")
 onready var laser_template = preload("res://Scenes/Entities/Laser.tscn")
 
+const area_per_player = 2000
+
 var network = NetworkedMultiplayerENet.new()
 
 var mode = ""
 var allowed_players = []
 var projectile_id = 0
+var play_area_size = area_per_player
 
 func _ready():
 	network.server_relay = false
@@ -91,9 +94,13 @@ remote func authorize(auth_token):
 	print(peer_id, " authorized")
 	rpc_id(peer_id, "authorized")
 	
+	play_area_size = max((players.get_child_count() + 1) * area_per_player, play_area_size) # we don't shrink the play area size
+	print("Play area size is now ", play_area_size, " in all directions from the center")
+	rpc("update_play_area", play_area_size)
+	
 	# Spawn player in random position in the play area
 	var player = player_template.instance()
-	player.position = Vector2(rand_range(0, 10000), rand_range(0, 10000))
+	player.position = Vector2(rand_range(-play_area_size, play_area_size), rand_range(-play_area_size, play_area_size))
 	player.peer_id = peer_id
 	player.name = "Player" + str(peer_id)
 	players.add_child(player)
