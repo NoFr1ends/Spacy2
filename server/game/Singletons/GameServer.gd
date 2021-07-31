@@ -49,6 +49,7 @@ func _on_gameserver(gameserver):
 		mode_controller = FreeForAll.new()
 		mode_controller.name = "FreeForAllGameMode"
 		mode_controller.expected_players = allowed_players
+		mode_controller.connect("start_game", self, "_on_mode_start_game")
 		mode_controller.connect("end_game", self, "_on_mode_end_game")
 		add_child(mode_controller)
 	else:
@@ -73,8 +74,13 @@ func _on_peer_disconnected(peer_id):
 		player.queue_free()
 		rpc("despawn_player", peer_id)
 
+func _on_mode_start_game():
+	print("Start game!")
+	rpc("start")
+
 func _on_mode_end_game():
 	print("Game finished!")
+	rpc("end")
 	Agones.shutdown()
 	get_tree().quit()
 
