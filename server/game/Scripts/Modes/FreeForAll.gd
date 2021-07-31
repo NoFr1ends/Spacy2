@@ -40,7 +40,7 @@ func create_state():
 	if not started:
 		state["P1"] = players.size()
 		state["P2"] = expected_players.size() 
-		state["W"] = time_to_start
+		state["W"] = round(time_to_start)
 	
 	return state
 

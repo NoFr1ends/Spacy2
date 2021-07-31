@@ -55,7 +55,10 @@ texture = ExtResource( 2 )
 
 [node name="UI" type="CanvasLayer" parent="."]
 
-[node name="Debug" type="VBoxContainer" parent="UI"]
+[node name="Debug" type="VBoxContainer" parent="UI" groups=[
+"while_playing",
+]]
+visible = false
 margin_right = 40.0
 margin_bottom = 40.0
 __meta__ = {
@@ -76,7 +79,10 @@ margin_right = 114.0
 margin_bottom = 32.0
 text = "Network: 100%"
 
-[node name="TimeLeft" type="Label" parent="UI"]
+[node name="TimeLeft" type="Label" parent="UI" groups=[
+"while_playing",
+]]
+visible = false
 anchor_right = 1.0
 margin_top = 5.0
 margin_bottom = 32.0
@@ -86,3 +92,48 @@ align = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="UIFadeout" type="ColorRect" parent="UI" groups=[
+"before_playing",
+]]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 0.588235 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="C" type="CenterContainer" parent="UI" groups=[
+"before_playing",
+]]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="V" type="VBoxContainer" parent="UI/C"]
+margin_left = 428.0
+margin_top = 275.0
+margin_right = 595.0
+margin_bottom = 325.0
+
+[node name="Label" type="Label" parent="UI/C/V"]
+margin_right = 167.0
+margin_bottom = 14.0
+text = "Waiting for players"
+align = 1
+
+[node name="NoPlayers" type="Label" parent="UI/C/V"]
+margin_top = 18.0
+margin_right = 167.0
+margin_bottom = 32.0
+text = "0 / 0"
+align = 1
+
+[node name="TimeLeft" type="Label" parent="UI/C/V"]
+margin_top = 36.0
+margin_right = 167.0
+margin_bottom = 50.0
+text = "Start in 30 seconds"
+align = 1

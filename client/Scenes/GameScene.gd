@@ -8,6 +8,7 @@ onready var time_left = $UI/TimeLeft
 
 const interpolation_offset = 100
 
+var started = false
 var player = null
 var last_world_state = 0
 var world_state_buffer = []
@@ -27,6 +28,7 @@ func _ready():
 
 	GameServer.connect("connected", self, "_on_GameServer_connected")
 	GameServer.connect("match_start", self, "_on_GameServer_match_start")
+	GameServer.connect("match_end", self, "_on_GameServer_match_end")
 	GameServer.connect("game_state", self, "_on_GameServer_game_state")
 	GameServer.connect("spawn", self, "_on_GameServer_spawn")
 	GameServer.connect("spawn_entity", self, "_on_GameServer_spawn_entity")
@@ -49,6 +51,9 @@ func _physics_process(delta):
 			var minutes = time / 60
 			var seconds = time % 60
 			time_left.text = str(minutes).pad_zeros(2) + ":" + str(seconds).pad_zeros(2)
+		if not started:
+			$UI/C/V/NoPlayers.text = str(world_state_buffer[1].M.P1) + "/" + str(world_state_buffer[1].M.P2)
+			$UI/C/V/TimeLeft.text = "Start in " + str(world_state_buffer[1].M.W) + " seconds"
 			
 		if world_state_buffer.size() > 2: # We can interpolate
 			network_stats.I += 1
@@ -141,7 +146,17 @@ func _on_GameServer_connected():
 	print("Connected and authorized at gameserver, waiting for match to start")
 
 func _on_GameServer_match_start():
-	print("match start")
+	started = true
+	for node in get_tree().get_nodes_in_group("before_playing"):
+		node.visible = false
+	for node in get_tree().get_nodes_in_group("while_playing"):
+		node.visible = true
+
+func _on_GameServer_match_end():
+	for node in get_tree().get_nodes_in_group("while_playing"):
+		node.visible = false
+	for node in get_tree().get_nodes_in_group("after_playing"):
+		node.visible = true
 	
 func _on_GameServer_game_state(state):
 	if state.T < last_world_state:

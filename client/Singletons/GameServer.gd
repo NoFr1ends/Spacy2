@@ -10,6 +10,7 @@ var client_clock = 0
 
 signal connected()
 signal match_start()
+signal match_end()
 signal game_state(state)
 signal spawn(details)
 signal spawn_entity(entity_type, id, position, rotation)
@@ -71,6 +72,16 @@ remote func handshake_done():
 	print("handshake done, final delta is ", time_difference)
 	rpc_id(1, "authorize", Authorization.token)
 	
+#################################
+# G A M E M O D E
+#################################
+
+remote func start():
+	emit_signal("match_start")
+
+remote func end():
+	emit_signal("match_end")
+
 #################################
 # W O R L D S Y N C
 #################################
