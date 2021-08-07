@@ -53,6 +53,10 @@ func player_joined(peer_id, username):
 	if players.size() == expected_players.size():
 		print("All players connected, start game")
 		_start_game()
+	
+	if started:
+		# We have to send match start to the newly connected client
+		emit_signal("start_game")
 
 func player_left(peer_id):
 	if peer_id in players:
