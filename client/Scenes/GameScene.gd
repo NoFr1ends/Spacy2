@@ -214,3 +214,4 @@ func _on_GameServer_update_play_area(size):
 	area.scale = Vector2(size * 4, size * 4)
 	area.material.set_shader_param("radius", size)
 	area.material.set_shader_param("scale", size * 4)
+	area.visible = true
