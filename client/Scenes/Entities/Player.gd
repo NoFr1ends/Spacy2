@@ -7,6 +7,7 @@ export var max_health = 100
 
 export var team_color = "blue"
 export var is_own_player = false
+export var paused = false
 
 onready var booster_left = $Ship/BoosterLeft
 onready var booster_right = $Ship/BoosterRight
@@ -32,6 +33,9 @@ func _ready():
 	health_bar.value = health
 
 func _process(delta):
+	if paused:
+		return
+	
 	if is_own_player:
 		look_at(get_global_mouse_position())
 	health_bar.set_rotation(-rotation)
@@ -85,6 +89,9 @@ func _process(delta):
 		shoot_cooldown = shoot_delay
 
 func _physics_process(delta):
+	if paused:
+		return
+	
 	if is_own_player:
 		# Send player state to server
 		GameServer.send_state({

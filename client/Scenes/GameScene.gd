@@ -151,12 +151,16 @@ func _on_GameServer_match_start():
 		node.visible = false
 	for node in get_tree().get_nodes_in_group("while_playing"):
 		node.visible = true
+	for node in $Players.get_children():
+		node.paused = false
 
 func _on_GameServer_match_end():
 	for node in get_tree().get_nodes_in_group("while_playing"):
 		node.visible = false
 	for node in get_tree().get_nodes_in_group("after_playing"):
 		node.visible = true
+	for node in $Players.get_children():
+		node.paused = true
 	
 func _on_GameServer_game_state(state):
 	if state.T < last_world_state:
@@ -174,6 +178,7 @@ func _on_GameServer_spawn(details):
 	player.position = details.P
 	player.rotation = details.R
 	player.is_own_player = true
+	player.paused = !started
 	$Players.add_child(player)
 
 func _on_GameServer_spawn_entity(entity_type, id, position, rotation):
