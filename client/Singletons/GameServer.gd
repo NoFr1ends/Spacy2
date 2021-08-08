@@ -11,6 +11,7 @@ var client_clock = 0
 signal connected()
 signal match_start()
 signal match_end()
+signal match_scoreboard(scoreboard)
 signal game_state(state)
 signal spawn(details)
 signal spawn_entity(entity_type, id, position, rotation)
@@ -81,6 +82,9 @@ remote func start():
 
 remote func end():
 	emit_signal("match_end")
+
+remote func scoreboard(scoreboard):
+	emit_signal("match_scoreboard", scoreboard)
 
 #################################
 # W O R L D S Y N C

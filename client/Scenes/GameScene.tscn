@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://Scenes/GameScene.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Game/transparent1x1.png" type="Texture" id=2]
 [ext_resource path="res://Assets/Game/Backgrounds/black.png" type="Texture" id=3]
 [ext_resource path="res://Scenes/Helpers/TilingBackground.gd" type="Script" id=4]
 [ext_resource path="res://Resources/KF_24_o1.tres" type="DynamicFont" id=5]
+[ext_resource path="res://Scenes/UI/Scoreboard.tscn" type="PackedScene" id=6]
 
 [sub_resource type="Shader" id=1]
 code = "shader_type canvas_item;
@@ -138,3 +139,12 @@ margin_right = 167.0
 margin_bottom = 50.0
 text = "Start in 30 seconds"
 align = 1
+
+[node name="Scoreboard" parent="UI" groups=[
+"while_playing",
+] instance=ExtResource( 6 )]
+visible = false
+margin_left = 10.0
+margin_top = 40.0
+margin_right = 210.0
+margin_bottom = 102.0

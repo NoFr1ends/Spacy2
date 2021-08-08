@@ -29,6 +29,7 @@ func _ready():
 	GameServer.connect("connected", self, "_on_GameServer_connected")
 	GameServer.connect("match_start", self, "_on_GameServer_match_start")
 	GameServer.connect("match_end", self, "_on_GameServer_match_end")
+	GameServer.connect("match_scoreboard", self, "_on_GameServer_match_scoreboard")
 	GameServer.connect("game_state", self, "_on_GameServer_game_state")
 	GameServer.connect("spawn", self, "_on_GameServer_spawn")
 	GameServer.connect("spawn_entity", self, "_on_GameServer_spawn_entity")
@@ -161,7 +162,10 @@ func _on_GameServer_match_end():
 		node.visible = true
 	for node in $Players.get_children():
 		node.paused = true
-	
+
+func _on_GameServer_match_scoreboard(scoreboard):
+	$UI/Scoreboard.scores = scoreboard
+
 func _on_GameServer_game_state(state):
 	if state.T < last_world_state:
 		print("Received old world state, ignoring")
