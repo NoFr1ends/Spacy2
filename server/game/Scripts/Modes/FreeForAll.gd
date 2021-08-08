@@ -12,6 +12,7 @@ var started = false
 
 signal start_game()
 signal end_game()
+signal scoreboard(scoreboard)
 
 func _ready():
 	time_left = max_round_time
@@ -44,6 +45,30 @@ func create_state():
 	
 	return state
 
+class ScoreBoardSorter:
+	static func sort_ascending(a, b):
+		if a["score"] < b["score"]:
+			return true
+		return false
+	
+	static func sort_decending(a, b):
+		if a["score"] > b["score"]:
+			return true
+		return false
+
+func create_scoreboard():
+	var scoreboard = []
+	
+	for player in players.values():
+		scoreboard.append({
+			"name": player["username"],
+			"score": player["score"]
+		})
+	
+	scoreboard.sort_custom(ScoreBoardSorter, "sort_decending")
+	
+	return scoreboard
+
 func player_joined(peer_id, username):
 	players[peer_id] = {
 		"username": username,
@@ -57,7 +82,15 @@ func player_joined(peer_id, username):
 	if started:
 		# We have to send match start to the newly connected client
 		emit_signal("start_game")
+	emit_signal("scoreboard", create_scoreboard())
 
 func player_left(peer_id):
 	if peer_id in players:
 		players.erase(peer_id)
+	emit_signal("scoreboard", create_scoreboard())
+
+func player_killed(player, killed_by):
+	print(player.peer_id, " was killed by ", killed_by)
+	if killed_by in players:
+		players[killed_by]["score"] = players[killed_by]["score"] + 1
+		emit_signal("scoreboard", create_scoreboard())

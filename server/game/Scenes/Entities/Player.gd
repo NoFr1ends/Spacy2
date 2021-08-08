@@ -15,6 +15,8 @@ var play_area_damage_time = 1
 
 var last_state_time = 0
 
+signal killed(killed_by)
+
 func _process(delta):
 	var distance = position.distance_to(Vector2.ZERO)
 	if distance > gs.play_area_size:
@@ -60,5 +62,6 @@ func damage(peer_id, damage):
 	if peer_id == self.peer_id:
 		return # self hurting is evil!
 	health -= damage
-	if health < 0:
+	if health <= 0:
 		health = 0 # dead is dead 
+		emit_signal("killed", peer_id)

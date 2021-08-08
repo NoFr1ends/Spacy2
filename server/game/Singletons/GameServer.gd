@@ -51,6 +51,7 @@ func _on_gameserver(gameserver):
 		mode_controller.expected_players = allowed_players
 		mode_controller.connect("start_game", self, "_on_mode_start_game")
 		mode_controller.connect("end_game", self, "_on_mode_end_game")
+		mode_controller.connect("scoreboard", self, "_on_mode_scoreboard")
 		add_child(mode_controller)
 	else:
 		printerr("Unknown game mode!")
@@ -84,6 +85,9 @@ func _on_mode_end_game():
 	Agones.shutdown()
 	get_tree().quit()
 
+func _on_mode_scoreboard(scoreboard):
+	rpc("scoreboard", scoreboard)
+
 func _physics_process(delta):
 	var world_state = {
 		"T": OS.get_system_time_msecs(),
@@ -103,6 +107,21 @@ func _physics_process(delta):
 
 func get_player(player_id):
 	return players.get_node_or_null("Player" + str(player_id))
+
+func spawn_player(peer_id):
+	var player = player_template.instance()
+	var direction = Vector2.UP.rotated(rand_range(0, 2*PI))
+	var distance = rand_range(0, play_area_size)
+	player.position = direction * distance
+	player.peer_id = peer_id
+	player.name = "Player" + str(peer_id)
+	players.add_child(player)
+	rpc_id(peer_id, "spawn", player.create_state())
+	
+	player.connect("killed", self, "_on_Player_killed", [player])
+
+func _on_Player_killed(killed_by, player):
+	mode_controller.player_killed(player, killed_by)
 
 remote func authorize(auth_token):
 	# TODO: parse auth token (JWT) and verify it
@@ -126,14 +145,7 @@ remote func authorize(auth_token):
 	rpc("update_play_area", play_area_size)
 	
 	# Spawn player in random position in the play area
-	var player = player_template.instance()
-	var direction = Vector2.UP.rotated(rand_range(0, 2*PI))
-	var distance = rand_range(0, play_area_size)
-	player.position = direction * distance
-	player.peer_id = peer_id
-	player.name = "Player" + str(peer_id)
-	players.add_child(player)
-	rpc_id(peer_id, "spawn", player.create_state())
+	spawn_player(peer_id)
 
 remote func handshake(client_time, delta):
 	var peer_id = get_tree().multiplayer.get_rpc_sender_id()
