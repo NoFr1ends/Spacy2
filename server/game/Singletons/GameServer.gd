@@ -121,7 +121,13 @@ func spawn_player(peer_id):
 	player.connect("killed", self, "_on_Player_killed", [player])
 
 func _on_Player_killed(killed_by, player):
+	var peer_id = player.peer_id
 	mode_controller.player_killed(player, killed_by)
+	rpc("despawn_player", peer_id)
+	player.queue_free()
+	
+	yield(get_tree().create_timer(5), "timeout")
+	spawn_player(peer_id)
 
 remote func authorize(auth_token):
 	# TODO: parse auth token (JWT) and verify it
@@ -163,8 +169,6 @@ remote func recv_state(state):
 	var peer_id = get_tree().multiplayer.get_rpc_sender_id()
 	var player = get_player(peer_id)
 	if not player:
-		printerr("Received state from peer ", peer_id, " without having a player instance")
-		network.disconnect_peer(peer_id)
 		return
 	
 	player.sync_state(state)
