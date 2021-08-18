@@ -37,7 +37,7 @@ func _ready():
 	GameServer.connect("update_play_area", self, "_on_GameServer_update_play_area")
 
 func _physics_process(delta):
-	if player:
+	if is_instance_valid(player):
 		debug_position.text = "Position: " + str(floor(player.position.x)) + "," + str(floor(player.position.y)) + " (" + str(player.position.distance_to(Vector2(0, 0))) + ")"
 		if network_stats.I + network_stats.E > 0:
 			debug_network.text = "Network: " + str(round(network_stats.I / float(network_stats.I + network_stats.E) * 1000) / 10) + "%"
@@ -182,6 +182,7 @@ func _on_GameServer_spawn(details):
 	player.position = details.P
 	player.rotation = details.R
 	player.is_own_player = true
+	player.name = "Player" + str(get_tree().get_network_unique_id())
 	player.paused = !started
 	$Players.add_child(player)
 

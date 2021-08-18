@@ -113,14 +113,13 @@ func set_boosting(new_val):
 	boosting = new_val
 
 func set_health(new_val):
-	if new_val != health:
+	if new_val != health and health_bar and is_instance_valid(health_bar):
+		health_bar.max_value = max_health
 		tween.interpolate_property(health_bar, "modulate", health_bar.modulate, Color(1, 1, 1, 1), 0.2, Tween.TRANS_LINEAR)
 		tween.interpolate_property(health_bar, "value", health_bar.value, new_val, 0.2, Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
 		tween.start()
 		health_fade_out = 2.0
 	health = new_val
-	if health_bar:
-		health_bar.max_value = max_health
 
 func sync_state(position, rotation, boosting):
 	if is_own_player:
