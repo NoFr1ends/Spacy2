@@ -7,6 +7,8 @@ import (
 	"io"
 	"log"
 	"open-match.dev/open-match/pkg/pb"
+	"os"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -73,10 +75,12 @@ func main() {
 }
 
 func fetch(be pb.BackendServiceClient, profile *pb.MatchProfile) ([]*pb.Match, error) {
+	port, err := strconv.ParseInt(os.Getenv("MMF_PORT"), 10, 32)
+
 	req := &pb.FetchMatchesRequest{
 		Config: &pb.FunctionConfig{
-			Host: "192.168.178.132", // todo
-			Port: 8001,
+			Host: os.Getenv("MMF_HOST"),
+			Port: int32(port),
 			Type: pb.FunctionConfig_GRPC,
 		},
 		Profile: profile,
@@ -100,7 +104,6 @@ func fetch(be pb.BackendServiceClient, profile *pb.MatchProfile) ([]*pb.Match, e
 
 		result = append(result, resp.GetMatch())
 	}
-
 
 	return result, nil
 }
